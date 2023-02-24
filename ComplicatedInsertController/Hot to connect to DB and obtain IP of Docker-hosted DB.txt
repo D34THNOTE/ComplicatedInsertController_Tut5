@@ -1,0 +1,19 @@
+﻿I hosted the database using Docker but had trouble connecting to it through the integrated Database functionalities in Rider
+
+What eventually worked was:
+
+1. Adding new Data source and choosing Microsoft SQL Server LocalDB
+2. In "Instance" choosing MSSQLLocalDB
+3. In Authentication choosing "Windows credentials"
+
+The docker-compose.yaml file that I've used for creating my local MS SQL DB can be found inside the project 
+
+
+To obtain the IP of the MS SQL database hosted inside a docker container you run this command inside Command Prompt
+(nowhere specific, if you have Docker in your PATHS(type "docker" to check - if it lists possible commands then you do) just open
+the CMD and run this)
+
+docker inspect -f "{{range .NetworkSettings.Networks}}{{.IPAddress}}{{end}}" tut5_mssql_1
+
+where tut5_mssql_1 should be replaced by the name of your server, you can check its name by typing "docker ps"
+it is what you see under "NAMES"

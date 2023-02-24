@@ -1,0 +1,24 @@
+version: '3.8'
+
+services:
+  mssql:
+    image: mcr.microsoft.com/mssql/server:2019-latest
+    environment:
+      - ACCEPT_EULA=Y
+      - MSSQL_PID=Developer
+      - MSSQL_SA_PASSWORD=YourStrongPassword1
+      - MSSQL_TCP_PORT=1433
+      - MSSQL_ENABLE_HADR=1
+      - MSSQL_COLLATION=SQL_Latin1_General_CP1_CI_AS
+    ports:
+      - "1433:1433"
+    volumes:
+      - ./data:/var/opt/mssql/data
+      - ./backups:/var/opt/mssql/backups
+      - ./scripts:/docker-entrypoint-initdb.d
+    command: ["tail", "-f", "/dev/null"]
+    hostname: mssql-server-linux
+
+networks:
+  default:
+    driver: bridge
