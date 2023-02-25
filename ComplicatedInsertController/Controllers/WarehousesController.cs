@@ -127,6 +127,8 @@ namespace ComplicatedInsertController.Controllers
                     // using transaction to ensure data safety in case of an error
                     using (var transaction = connection.BeginTransaction())
                     {
+                        int? newRecordId;
+                        
                         try
                         {
                            using (var command = new SqlCommand("UPDATE [Order] SET FulfilledAt = @fulfilledAt WHERE IDorder = @idOrder", 
@@ -142,9 +144,11 @@ namespace ComplicatedInsertController.Controllers
                                 Console.WriteLine(ex);
                                 return StatusCode(500, "There was an error when updating the order, no rows were affected");
                             }
-                        }
-                        
-                        using (var command = new SqlCommand("INSERT INTO Product_Warehouse (IdWarehouse, IdProduct, IdOrder, Amount, Price, CreatedAt) VALUES (@idWarehouse, @idProduct, @idOrder, @amount, @price, @createdAt)", 
+                        } 
+                           
+                        // OUTPUT will return the value of IdProductWarehouse
+                        using (var command = new SqlCommand("INSERT INTO Product_Warehouse (IdWarehouse, IdProduct, IdOrder, Amount, Price, CreatedAt) " +
+                                                            "OUTPUT INSERTED.IdProductWarehouse VALUES (@idWarehouse, @idProduct, @idOrder, @amount, @price, @createdAt)", 
                                    connection, transaction))
                         {
                             command.Parameters.AddWithValue("@idWarehouse", incomingData.IdWarehouse);
@@ -154,35 +158,35 @@ namespace ComplicatedInsertController.Controllers
                             command.Parameters.AddWithValue("@price", incomingData.Amount * productPrice);
                             command.Parameters.AddWithValue("@createdAt", DateTime.Now);
 
+                            
                             try
                             {
-                                command.ExecuteNonQuery();
+                                newRecordId = (int)command.ExecuteScalar();
                             }
                             catch (Exception ex)
                             {
                                 Console.WriteLine(ex);
                                 return StatusCode(500, "There was an error when inserting a record into the database, no rows were affected");
                             }
+                            
                         }
                         
                         transaction.Commit(); 
+                        return Ok(newRecordId);
+                        
                         } catch (Exception ex)
                         {
                             Console.WriteLine(ex);
                             return StatusCode(500, "Internal error occured, no rows were affected");
                         }
                     }
-                    
-                    
                 }
                 catch (Exception ex)
                 {
                     Console.WriteLine(ex);
                 }
             }
-
-            Console.WriteLine("Error!");
-            return Ok(0);
+            return StatusCode(405, "Unexpected error");
         }
     }
 }
