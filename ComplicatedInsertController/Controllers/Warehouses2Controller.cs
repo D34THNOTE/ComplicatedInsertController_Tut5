@@ -40,7 +40,7 @@ namespace ComplicatedInsertController.Controllers
                                 return StatusCode(404, ex.Message);
                             } 
                             Console.WriteLine(ex);
-                            return StatusCode(500, "There was an error when processing your request, no rows were affected2");
+                            return StatusCode(500, "There was an error when processing your request, no rows were affected");
                         }
                     }
                 }
