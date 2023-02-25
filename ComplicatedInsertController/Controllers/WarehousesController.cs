@@ -36,7 +36,7 @@ namespace ComplicatedInsertController.Controllers
 
                         if (productCheck == 0)
                         {
-                            return NotFound($"Product with ID {incomingData.IdProduct} not found");
+                            return StatusCode(404,$"Product with ID {incomingData.IdProduct} not found");
                         }
                     }
                     
@@ -57,7 +57,7 @@ namespace ComplicatedInsertController.Controllers
 
                         if (warehouseCheck == 0)
                         {
-                            return NotFound($"Warehouse with ID {incomingData.IdWarehouse} not found");
+                            return StatusCode(404,$"Warehouse with ID {incomingData.IdWarehouse} not found");
                         }
                     }
                     
@@ -83,7 +83,7 @@ namespace ComplicatedInsertController.Controllers
 
                         if (orderId == null)
                         {
-                            return BadRequest($"No matching order found for product with Id {incomingData.IdProduct}, the amount {incomingData.Amount} created at {incomingData.CreatedAt}");
+                            return StatusCode(404,$"No matching order found for product with ID {incomingData.IdProduct}, the amount {incomingData.Amount} and a correct creation date");
                         }
 
                         // check if the order has been already completed in Product_Warehouse
@@ -103,7 +103,7 @@ namespace ComplicatedInsertController.Controllers
 
                             if (productWarehouseCheck > 0)
                             {
-                                return BadRequest($"Order with ID {orderId} has already been completed");
+                                return StatusCode(404,$"Order with ID {orderId} has already been fulfilled");
                             }
                         }
                     }
@@ -173,10 +173,7 @@ namespace ComplicatedInsertController.Controllers
                         }
                     }
                     
-
-                    Console.WriteLine("Worked?");
-                    return Ok(incomingData);
-                    //TODO remove this message, marking the end of my "try" here
+                    
                 }
                 catch (Exception ex)
                 {
